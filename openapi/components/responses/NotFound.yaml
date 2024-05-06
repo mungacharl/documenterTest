@@ -1,0 +1,11 @@
+description: |-
+  Not Found.
+
+  The referred Visit was not found.
+content:
+  application/problem+json:
+    schema:
+      $ref: ../schemas/ProblemApiResponse.yaml
+    examples:
+      Not_Found:
+        $ref: ../examples/Not_Found.yaml

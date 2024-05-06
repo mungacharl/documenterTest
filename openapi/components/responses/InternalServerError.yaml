@@ -1,0 +1,15 @@
+description: |-
+  Internal Server Error.
+
+  Possible reasons:
+  1) A request to another service has failed.
+  2) An unexpected exception has happened.
+content:
+  application/problem+json:
+    schema:
+      $ref: ../schemas/ProblemApiResponse.yaml
+    examples:
+      Another_service_request_failed:
+        $ref: ../examples/Internal_Server_Error.yaml
+      Internal_Server_Error_With_Fault_Detail:
+        $ref: ../examples/Internal_Server_Error_With_Fault_Detail.yaml

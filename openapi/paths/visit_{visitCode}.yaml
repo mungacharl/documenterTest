@@ -1,0 +1,19 @@
+get:
+  summary: Get a Visit
+  operationId: getVisit
+  description: Used to Fetch a Single Visit
+  tags:
+    - Billing
+  parameters:
+    - $ref: ../components/parameters/visitCode.yaml
+  responses:
+    '200':
+      description: OK.<br>The visit was successfully retrieved.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/VisitResponse.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

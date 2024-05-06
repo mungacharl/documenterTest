@@ -1,0 +1,7 @@
+name: closeVisit
+in: query
+description: Whether to also close a Visit or NOT when processing a request
+required: false
+schema:
+  type: boolean
+  default: false

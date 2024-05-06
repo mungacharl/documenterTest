@@ -1,0 +1,8 @@
+description: Missing required property.
+value:
+  type: https://zalando.github.io/problem/constraint-violation
+  title: Constraint Violation
+  status: 400
+  violations:
+    field: aField
+    message: must not be null

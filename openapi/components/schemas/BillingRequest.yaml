@@ -1,0 +1,52 @@
+type: array
+description: >-
+  List of invoices from the Integrated Facility.
+
+
+  Even when providing only one invoice it should be provided as a list of one
+  element.
+items:
+  title: ExternalInvoice
+  description: The invoice from the Integrated Facility.
+  type: object
+  required:
+    - externalInvoiceNumber
+    - items
+  properties:
+    externalInvoiceNumber:
+      type: string
+      description: |-
+        The invoice number used by the Integrated Facility.
+
+        It can be used for reconciliation purposes.
+    items:
+      type: array
+      description: List of items enclosed in the Integrated Facility's invoice.
+      items:
+        title: ExternalItem
+        description: The item enclosed in the Integrated Facility's invoice.
+        type: object
+        required:
+          - productCode
+          - quantity
+          - price
+        properties:
+          productCode:
+            type: string
+            description: Code used to locate the product within the platform.
+          description:
+            type: string
+            description: The product description.
+          quantity:
+            type: integer
+            format: int32
+            description: Number of items to be billed.
+            example: 2
+          price:
+            type: number
+            description: Item unit price.
+            example: 123.45
+          reservationAmount:
+            type: number
+            description: Amount to reserve for an item.
+            example: 123.45

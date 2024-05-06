@@ -1,0 +1,5 @@
+description: Some condition not met.
+value:
+  title: Bad Request
+  status: 400
+  detail: Cannot add item to the bill

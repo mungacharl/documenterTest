@@ -1,0 +1,16 @@
+type: object
+description: |-
+  Lists of invoices, payments and medical details from the Integrated Facility.
+
+  This payload is indicated for submitting all the above lists at once.
+required:
+  - invoices
+  - payments
+  - medicalDetails
+properties:
+  invoices:
+    $ref: ./BillingRequest.yaml
+  payments:
+    $ref: ./PaymentRequest.yaml
+  medicalDetails:
+    $ref: ./MedicalDetailsRequest.yaml

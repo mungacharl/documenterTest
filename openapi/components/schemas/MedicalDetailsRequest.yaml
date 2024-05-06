@@ -1,0 +1,23 @@
+type: object
+description: List of diagnoses String of Doctors' notes
+required:
+  - diagnosis
+properties:
+  doctorsNotes:
+    type: string
+    description: The notes taken by the doctor during the visit.
+  diagnosis:
+    type: array
+    description: List of diagnoses
+    items:
+      title: Diagnosis
+      description: The diagnosis discovered during the visit
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: >-
+            Code used to find the correlated diagnosis within the CarePay
+            Platform

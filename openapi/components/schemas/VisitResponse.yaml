@@ -1,0 +1,154 @@
+type: object
+description: The visit Object
+required:
+  - visitCode
+  - accountHolder
+  - account
+  - patient
+  - copaymentAmount
+properties:
+  visitCode:
+    type: string
+    description: The Visit Code
+  accountHolder:
+    type: object
+    description: Account Details of The Policy Holder
+    required:
+      - fullName
+      - dateOfBirth
+      - gender
+      - mobileNumber
+      - relationship
+      - identifications
+    properties:
+      fullName:
+        type: string
+      dateOfBirth:
+        type: string
+        format: date
+      gender:
+        type: string
+        enum:
+          - MALE
+          - FEMALE
+      mobileNumber:
+        type: string
+      relationship:
+        type: string
+        enum:
+          - PRIMARY
+          - SPOUSE
+          - CHILD
+          - NEXTOFKIN
+          - OTHER
+      identifications:
+        type: array
+        description: A list with Identifications
+        items:
+          type: object
+          description: Identification Details
+          required:
+            - type
+            - number
+          properties:
+            type:
+              type: string
+              enum:
+                - NATIONAL_ID
+                - STATE_ID
+                - PASSPORT
+                - STAFF_ID
+                - DRIVING_LICENSE
+                - VOTER_ID
+                - MILITARY_ID
+                - HEADSHOT
+                - NHIF
+                - FINGERPRINT_INDEX_RIGHT
+                - FINGERPRINT_INDEX_LEFT
+                - FINGERPRINT_THUMB_RIGHT
+                - FINGERPRINT_THUMB_LEFT
+                - BIRTH_CERTIFICATE
+                - DEPENDANCY_DOCUMENT
+                - SECONDARY_PHONE_NUMBER
+                - SIGNATURE
+                - PHONE_NUMBER
+                - ALIEN_ID
+            number:
+              type: string
+  account:
+    type: object
+    description: Account Details
+    required:
+      - plan
+      - description
+      - status
+      - limit
+    properties:
+      plan:
+        type: string
+      description:
+        type: string
+      status:
+        type: string
+      limit:
+        type: object
+        description: Limit Details
+        required:
+          - currency
+          - amount
+        properties:
+          currency:
+            type: string
+          amount:
+            type: number
+            example: 123.45
+  patient:
+    type: object
+    description: Patient Details
+    required:
+      - fullName
+      - dateOfBirth
+      - gender
+      - mobileNumber
+      - relationship
+      - identifications
+      - cover
+      - membershipNumber
+    properties:
+      fullName:
+        type: string
+      dateOfBirth:
+        type: string
+        format: date-time
+      gender:
+        type: string
+      mobileNumber:
+        type: string
+      relationship:
+        type: string
+      identifications:
+        type: array
+        description: Identification List
+        items:
+          type: object
+          description: Identification Details
+          required:
+            - type
+            - number
+          properties:
+            type:
+              type: string
+            number:
+              type: string
+  copaymentAmount:
+    type: object
+    description: Limit Details
+    required:
+      - currency
+      - amount
+    properties:
+      currency:
+        type: string
+      amount:
+        type: number
+        example: 123.45

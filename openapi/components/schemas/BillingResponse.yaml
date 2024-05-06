@@ -1,0 +1,6 @@
+type: object
+properties:
+  balance:
+    type: number
+    description: Cover Balance after billing items.
+    example: 123.45

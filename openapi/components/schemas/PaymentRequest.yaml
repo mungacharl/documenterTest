@@ -1,0 +1,25 @@
+type: array
+description: >-
+  List of payments for a specific Visit.
+
+
+  Even when providing only one payment it should be provided as a list of one
+  element.
+items:
+  title: ExternalPayment
+  description: The payment for a Visit.
+  type: object
+  required:
+    - type
+    - amount
+  properties:
+    type:
+      type: string
+      enum:
+        - CASH
+        - BENEFIT
+      description: The payment type within the CarePay Platform.
+    amount:
+      type: number
+      description: The payment amount.
+      example: 123.45

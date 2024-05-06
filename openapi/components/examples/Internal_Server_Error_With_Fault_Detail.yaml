@@ -1,0 +1,7 @@
+description: A request to another service has failed.
+value:
+  title: Internal Server Error
+  status: 500
+  detail: Cannot add item to the bill
+  fault:
+    - 'item code: <code> not added'

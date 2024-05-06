@@ -1,0 +1,20 @@
+post:
+  summary: Close a Visit
+  operationId: closeVisit
+  description: Use to close a Visit on CarePay Platform.
+  tags:
+    - Billing
+  parameters:
+    - $ref: ../components/parameters/visitCode.yaml
+  responses:
+    '204':
+      description: |-
+        No Content.
+
+        The Visit has been successfully closed.
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

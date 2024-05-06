@@ -1,0 +1,18 @@
+description: |-
+  Bad Request.
+
+  Possible reasons:
+  1) The request does not have all the required properties.
+  2) The request properties are not on the required format.
+  3) The request fails due to some violations.
+content:
+  application/problem+json:
+    schema:
+      $ref: ../schemas/ProblemApiResponse.yaml
+    examples:
+      Constraint_Violation:
+        $ref: ../examples/Constraint_Violation.yaml
+      Bad_Request:
+        $ref: ../examples/Bad_Request.yaml
+      Bad_Request_With_Fault_Detail:
+        $ref: ../examples/Bad_Request_With_Fault_Detail.yaml

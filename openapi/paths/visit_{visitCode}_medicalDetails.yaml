@@ -1,0 +1,31 @@
+post:
+  summary: Submit Visit Medical Details
+  operationId: submitVisitMedicalDetails
+  description: Used to submit visit details i.e diagnosis and notes
+  tags:
+    - Billing
+  parameters:
+    - $ref: ../components/parameters/visitCode.yaml
+    - $ref: ../components/parameters/closeVisit.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/MedicalDetailsRequest.yaml
+  responses:
+    '200':
+      description: >-
+        Ok.
+
+
+        The visit along with the medical detail(s) were submitted successfully.
+
+        Note that the visit will only be submitted if the closeVisit flag(Query
+        Parameter) is set to true.
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

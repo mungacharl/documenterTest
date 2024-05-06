@@ -1,0 +1,635 @@
+openapi: 3.0.0
+info:
+  license:
+    name: CPI
+    url: https://www.carpayke.com
+  version: 1.0.22
+  title: Integration API.
+  description: |
+    # How to get API Access token
+    When invoking any API operation on M-TIBA platform, a bearer token has to be
+    supplied for authenticating the request.
+
+    M-TIBA platform uses expiring tokens which
+    are short-lived and hence the invoking system has to regularly generate and supply
+    a valid token using the [System Login API](https://carepay.stoplight.io/docs/cp-apis/0ac07b12bcccc-system-login).
+
+    The API uses a username and password supplied by CarePay to generate a valid access token that can be used to authenticate
+    subsequent requests before expiry.
+  contact:
+    name: API Support
+    url: https://www.example.com/support
+    email: billingteam@carepay.com
+servers:
+  - url: https://api.ke-acc.carepay.dev/api/integration
+    description: KE TEST
+  - url: https://api.ke-acc.carepay.dev/api/integration
+    description: KE ACC
+security:
+  - Authorization: []
+tags:
+  - name: Billing
+    description: Endpoints for enabling Integrated Facilities to use CarePay Platform for billing.
+paths:
+  /visit/{visitCode}/bill:
+    post:
+      summary: Bill a Visit
+      operationId: billVisit
+      description: Used to create Visit's invoice(s) on CarePay Platform and bill the item(s) within the Invoice(s).
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BillingRequest'
+      responses:
+        '200':
+          description: |-
+            Ok.
+
+            Invoice(s) successfully created and item(s) successfully billed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /visit/{visitCode}/bill/bulk:
+    post:
+      summary: Bulk bill a Visit
+      operationId: bulkBillVisit
+      description: Used to create Visit's invoice(s) on CarePay Platform, bill the Item(s) within the Invoice(s), add Payment(s) and submit Visit details i.e diagnosis and notes.
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+        - $ref: '#/components/parameters/closeVisit'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkBillingRequest'
+      responses:
+        '200':
+          description: |-
+            Ok.
+
+            Invoice(s) successfully created and item(s) successfully billed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /visit/{visitCode}/payments:
+    post:
+      summary: Add payment(s) to a Visit
+      operationId: addVisitPayment
+      description: Used to add payment(s) to a Visit on CarePay Platform.
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentRequest'
+      responses:
+        '200':
+          description: |-
+            Ok.
+
+            Payment(s) was(were) successfully added to CarePay Platform.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /visit/{visitCode}/medicalDetails:
+    post:
+      summary: Submit Visit Medical Details
+      operationId: submitVisitMedicalDetails
+      description: Used to submit visit details i.e diagnosis and notes
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+        - $ref: '#/components/parameters/closeVisit'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalDetailsRequest'
+      responses:
+        '200':
+          description: |-
+            Ok.
+
+            The visit along with the medical detail(s) were submitted successfully.
+            Note that the visit will only be submitted if the closeVisit flag(Query Parameter) is set to true.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /visit/{visitCode}/close:
+    post:
+      summary: Close a Visit
+      operationId: closeVisit
+      description: Use to close a Visit on CarePay Platform.
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+      responses:
+        '204':
+          description: |-
+            No Content.
+
+            The Visit has been successfully closed.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /visit/{visitCode}:
+    get:
+      summary: Get a Visit
+      operationId: getVisit
+      description: Used to Fetch a Single Visit
+      tags:
+        - Billing
+      parameters:
+        - $ref: '#/components/parameters/visitCode'
+      responses:
+        '200':
+          description: OK.<br>The visit was successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    visitCode:
+      name: visitCode
+      in: path
+      required: true
+      description: The Visit Code of the Visit to be billed.
+      schema:
+        type: string
+    closeVisit:
+      name: closeVisit
+      in: query
+      description: Whether to also close a Visit or NOT when processing a request
+      required: false
+      schema:
+        type: boolean
+        default: false
+  schemas:
+    BillingRequest:
+      type: array
+      description: |-
+        List of invoices from the Integrated Facility.
+
+        Even when providing only one invoice it should be provided as a list of one element.
+      items:
+        title: ExternalInvoice
+        description: The invoice from the Integrated Facility.
+        type: object
+        required:
+          - externalInvoiceNumber
+          - items
+        properties:
+          externalInvoiceNumber:
+            type: string
+            description: |-
+              The invoice number used by the Integrated Facility.
+
+              It can be used for reconciliation purposes.
+          items:
+            type: array
+            description: List of items enclosed in the Integrated Facility's invoice.
+            items:
+              title: ExternalItem
+              description: The item enclosed in the Integrated Facility's invoice.
+              type: object
+              required:
+                - productCode
+                - quantity
+                - price
+              properties:
+                productCode:
+                  type: string
+                  description: Code used to locate the product within the platform.
+                description:
+                  type: string
+                  description: The product description.
+                quantity:
+                  type: integer
+                  format: int32
+                  description: Number of items to be billed.
+                  example: 2
+                price:
+                  type: number
+                  description: Item unit price.
+                  example: 123.45
+                reservationAmount:
+                  type: number
+                  description: Amount to reserve for an item.
+                  example: 123.45
+    BillingResponse:
+      type: object
+      properties:
+        balance:
+          type: number
+          description: Cover Balance after billing items.
+          example: 123.45
+    BulkBillingRequest:
+      type: object
+      description: |-
+        Lists of invoices, payments and medical details from the Integrated Facility.
+
+        This payload is indicated for submitting all the above lists at once.
+      required:
+        - invoices
+        - payments
+        - medicalDetails
+      properties:
+        invoices:
+          $ref: '#/components/schemas/BillingRequest'
+        payments:
+          $ref: '#/components/schemas/PaymentRequest'
+        medicalDetails:
+          $ref: '#/components/schemas/MedicalDetailsRequest'
+    PaymentRequest:
+      type: array
+      description: |-
+        List of payments for a specific Visit.
+
+        Even when providing only one payment it should be provided as a list of one element.
+      items:
+        title: ExternalPayment
+        description: The payment for a Visit.
+        type: object
+        required:
+          - type
+          - amount
+        properties:
+          type:
+            type: string
+            enum:
+              - CASH
+              - BENEFIT
+            description: The payment type within the CarePay Platform.
+          amount:
+            type: number
+            description: The payment amount.
+            example: 123.45
+    MedicalDetailsRequest:
+      type: object
+      description: List of diagnoses String of Doctors' notes
+      required:
+        - diagnosis
+      properties:
+        doctorsNotes:
+          type: string
+          description: The notes taken by the doctor during the visit.
+        diagnosis:
+          type: array
+          description: List of diagnoses
+          items:
+            title: Diagnosis
+            description: The diagnosis discovered during the visit
+            type: object
+            required:
+              - code
+            properties:
+              code:
+                type: string
+                description: Code used to find the correlated diagnosis within the CarePay Platform
+    VisitResponse:
+      type: object
+      description: The visit Object
+      required:
+        - visitCode
+        - accountHolder
+        - account
+        - patient
+        - copaymentAmount
+      properties:
+        visitCode:
+          type: string
+          description: The Visit Code
+        accountHolder:
+          type: object
+          description: Account Details of The Policy Holder
+          required:
+            - fullName
+            - dateOfBirth
+            - gender
+            - mobileNumber
+            - relationship
+            - identifications
+          properties:
+            fullName:
+              type: string
+            dateOfBirth:
+              type: string
+              format: date
+            gender:
+              type: string
+              enum:
+                - MALE
+                - FEMALE
+            mobileNumber:
+              type: string
+            relationship:
+              type: string
+              enum:
+                - PRIMARY
+                - SPOUSE
+                - CHILD
+                - NEXTOFKIN
+                - OTHER
+            identifications:
+              type: array
+              description: A list with Identifications
+              items:
+                type: object
+                description: Identification Details
+                required:
+                  - type
+                  - number
+                properties:
+                  type:
+                    type: string
+                    enum:
+                      - NATIONAL_ID
+                      - STATE_ID
+                      - PASSPORT
+                      - STAFF_ID
+                      - DRIVING_LICENSE
+                      - VOTER_ID
+                      - MILITARY_ID
+                      - HEADSHOT
+                      - NHIF
+                      - FINGERPRINT_INDEX_RIGHT
+                      - FINGERPRINT_INDEX_LEFT
+                      - FINGERPRINT_THUMB_RIGHT
+                      - FINGERPRINT_THUMB_LEFT
+                      - BIRTH_CERTIFICATE
+                      - DEPENDANCY_DOCUMENT
+                      - SECONDARY_PHONE_NUMBER
+                      - SIGNATURE
+                      - PHONE_NUMBER
+                      - ALIEN_ID
+                  number:
+                    type: string
+        account:
+          type: object
+          description: Account Details
+          required:
+            - plan
+            - description
+            - status
+            - limit
+          properties:
+            plan:
+              type: string
+            description:
+              type: string
+            status:
+              type: string
+            limit:
+              type: object
+              description: Limit Details
+              required:
+                - currency
+                - amount
+              properties:
+                currency:
+                  type: string
+                amount:
+                  type: number
+                  example: 123.45
+        patient:
+          type: object
+          description: Patient Details
+          required:
+            - fullName
+            - dateOfBirth
+            - gender
+            - mobileNumber
+            - relationship
+            - identifications
+            - cover
+            - membershipNumber
+          properties:
+            fullName:
+              type: string
+            dateOfBirth:
+              type: string
+              format: date-time
+            gender:
+              type: string
+            mobileNumber:
+              type: string
+            relationship:
+              type: string
+            identifications:
+              type: array
+              description: Identification List
+              items:
+                type: object
+                description: Identification Details
+                required:
+                  - type
+                  - number
+                properties:
+                  type:
+                    type: string
+                  number:
+                    type: string
+        copaymentAmount:
+          type: object
+          description: Limit Details
+          required:
+            - currency
+            - amount
+          properties:
+            currency:
+              type: string
+            amount:
+              type: number
+              example: 123.45
+    ProblemApiResponse:
+      type: object
+      required:
+        - status
+        - title
+      properties:
+        type:
+          description: A static error page URI.
+          type: string
+          format: uri
+          example: https://some.erro/static/page
+        violations:
+          description: A list of constraint violations.
+          type: object
+        fault:
+          description: A list of faults.
+          type: array
+          items:
+            type: string
+        title:
+          description: The problem title.
+          type: string
+          example: Bad Request
+        status:
+          description: The HTTP Status code.
+          type: integer
+          format: int32
+          example: 400
+        detail:
+          description: A message or an error key.
+          type: string
+          example: error.violations
+  responses:
+    BadRequest:
+      description: |-
+        Bad Request.
+
+        Possible reasons:
+        1) The request does not have all the required properties.
+        2) The request properties are not on the required format.
+        3) The request fails due to some violations.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemApiResponse'
+          examples:
+            Constraint_Violation:
+              $ref: '#/components/examples/Constraint_Violation'
+            Bad_Request:
+              $ref: '#/components/examples/Bad_Request'
+            Bad_Request_With_Fault_Detail:
+              $ref: '#/components/examples/Bad_Request_With_Fault_Detail'
+    InternalServerError:
+      description: |-
+        Internal Server Error.
+
+        Possible reasons:
+        1) A request to another service has failed.
+        2) An unexpected exception has happened.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemApiResponse'
+          examples:
+            Another_service_request_failed:
+              $ref: '#/components/examples/Internal_Server_Error'
+            Internal_Server_Error_With_Fault_Detail:
+              $ref: '#/components/examples/Internal_Server_Error_With_Fault_Detail'
+    NotFound:
+      description: |-
+        Not Found.
+
+        The referred Visit was not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemApiResponse'
+          examples:
+            Not_Found:
+              $ref: '#/components/examples/Not_Found'
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  examples:
+    Constraint_Violation:
+      description: Missing required property.
+      value:
+        type: https://zalando.github.io/problem/constraint-violation
+        title: Constraint Violation
+        status: 400
+        violations:
+          field: aField
+          message: must not be null
+    Bad_Request:
+      description: Some condition not met.
+      value:
+        title: Bad Request
+        status: 400
+        detail: Cannot add item to the bill
+    Bad_Request_With_Fault_Detail:
+      description: Some condition not met.
+      value:
+        title: Bad Request
+        status: 400
+        detail: Cannot add item to the bill
+        fault:
+          - 'item: code: <code> not added'
+    Internal_Server_Error:
+      description: A request to another service has failed.
+      value:
+        title: Internal Server Error
+        status: 500
+        detail: Error retrieving treatment
+    Internal_Server_Error_With_Fault_Detail:
+      description: A request to another service has failed.
+      value:
+        title: Internal Server Error
+        status: 500
+        detail: Cannot add item to the bill
+        fault:
+          - 'item code: <code> not added'
+    Not_Found:
+      description: The referred entity was not found.
+      value:
+        title: Not Found
+        status: 404
+        detail: Treatment not found
+x-tyk-api-gateway:
+  info:
+    id: integration
+    name: integration
+    state:
+      active: true
+  upstream:
+    url: http://integration.default.svc.cluster.local:80
+  server:
+    listenPath:
+      value: /api/v3/integration
+      strip: true
+  middleware:
+    global:
+      pluginConfig:
+        driver: goplugin
+        bundle:
+          enabled: true
+          path: spicedb-plugin-1.6.zip

@@ -1,0 +1,6 @@
+name: visitCode
+in: path
+required: true
+description: The Visit Code of the Visit to be billed.
+schema:
+  type: string

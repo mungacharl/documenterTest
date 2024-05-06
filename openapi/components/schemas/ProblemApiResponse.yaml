@@ -1,0 +1,31 @@
+type: object
+required:
+  - status
+  - title
+properties:
+  type:
+    description: A static error page URI.
+    type: string
+    format: uri
+    example: https://some.erro/static/page
+  violations:
+    description: A list of constraint violations.
+    type: object
+  fault:
+    description: A list of faults.
+    type: array
+    items:
+      type: string
+  title:
+    description: The problem title.
+    type: string
+    example: Bad Request
+  status:
+    description: The HTTP Status code.
+    type: integer
+    format: int32
+    example: 400
+  detail:
+    description: A message or an error key.
+    type: string
+    example: error.violations

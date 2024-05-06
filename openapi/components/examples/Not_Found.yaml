@@ -1,0 +1,5 @@
+description: The referred entity was not found.
+value:
+  title: Not Found
+  status: 404
+  detail: Treatment not found

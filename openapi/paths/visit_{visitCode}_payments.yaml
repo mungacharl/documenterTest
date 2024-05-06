@@ -1,0 +1,26 @@
+post:
+  summary: Add payment(s) to a Visit
+  operationId: addVisitPayment
+  description: Used to add payment(s) to a Visit on CarePay Platform.
+  tags:
+    - Billing
+  parameters:
+    - $ref: ../components/parameters/visitCode.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/PaymentRequest.yaml
+  responses:
+    '200':
+      description: |-
+        Ok.
+
+        Payment(s) was(were) successfully added to CarePay Platform.
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml

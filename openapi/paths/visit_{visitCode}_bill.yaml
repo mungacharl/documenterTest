@@ -1,0 +1,32 @@
+post:
+  summary: Bill a Visit
+  operationId: billVisit
+  description: >-
+    Used to create Visit's invoice(s) on CarePay Platform and bill the item(s)
+    within the Invoice(s).
+  tags:
+    - Billing
+  parameters:
+    - $ref: ../components/parameters/visitCode.yaml
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../components/schemas/BillingRequest.yaml
+  responses:
+    '200':
+      description: |-
+        Ok.
+
+        Invoice(s) successfully created and item(s) successfully billed.
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/BillingResponse.yaml
+    '400':
+      $ref: ../components/responses/BadRequest.yaml
+    '404':
+      $ref: ../components/responses/NotFound.yaml
+    '500':
+      $ref: ../components/responses/InternalServerError.yaml
